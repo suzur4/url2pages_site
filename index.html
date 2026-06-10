@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>URLを入力してからページが表示されるまで｜体験して学ぶ</title>
+
+  <!-- 初期テーマ・文字サイズを描画前に適用（ちらつき防止） -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('u2p_theme');
+        if (!t) { t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; }
+        document.documentElement.setAttribute('data-theme', t);
+        if (localStorage.getItem('u2p_fs') === 'lg') document.documentElement.classList.add('fs-lg');
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="style.css?v=5">
+  <script src="script.js?v=5" defer></script>
+
+</head>
+
+<body>
+
+  <header class="topbar">
+    <button class="brand" onclick="go('home')" aria-label="ホームへ">
+      <svg class="logo" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <circle cx="20" cy="20" r="18" fill="var(--surface)" stroke="var(--line)" stroke-width="2" />
+        <circle cx="11" cy="20" r="3.4" fill="var(--user)" />
+        <circle cx="29" cy="12" r="3" fill="var(--dns)" />
+        <circle cx="30" cy="28" r="3" fill="var(--rt)" />
+        <circle cx="20" cy="20" r="2.6" fill="var(--pkt)" />
+        <path d="M11 20 L20 20 L29 12 M20 20 L30 28" stroke="var(--text-faint)" stroke-width="1.8" fill="none" />
+      </svg>
+      <span class="bt"><b>URL→ページ表示</b><small>体験して学ぶ・情報Ⅰ</small></span>
+    </button>
+    <span class="spacer"></span>
+    <nav class="dots" aria-label="進捗">
+      <button class="dot" data-k="dns" onclick="go('dns')" title="DNS"><span class="num">1</span><span
+          class="chk">✓</span></button>
+      <button class="dot" data-k="pkt" onclick="go('pkt')" title="パケット"><span class="num">2</span><span
+          class="chk">✓</span></button>
+      <button class="dot" data-k="rt" onclick="go('rt')" title="ルーティング"><span class="num">3</span><span
+          class="chk">✓</span></button>
+    </nav>
+    <div class="tools">
+      <button class="iconbtn" id="themeBtn" aria-pressed="false" title="表示テーマを切り替え（ライト／ダーク）">
+        <span class="ic" id="themeIcon">☀</span><span class="ib-lab" id="themeLab">ライト</span>
+      </button>
+      <button class="iconbtn" id="fontBtn" aria-pressed="false" title="文字サイズを切り替え（標準／大）">
+        <span class="ic" style="font-weight:900">A</span><span class="ib-lab" id="fontLab">標準</span>
+      </button>
+      <button class="iconbtn" onclick="resetAll()" title="この端末の保存内容を消去">
+        <span class="ic">↺</span><span class="ib-lab">リセット</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===================== ホーム ===================== -->
+    <section class="view" id="view-home">
+      <div class="hero">
+        <span class="kicker">反転学習 × ジグソー法</span>
+        <h1>「example.com」と打ってから、<br>ページが出るまでに何が起きてる？</h1>
+        <p class="lead">3つの仕事が連携しています。自分の担当パートを選んで、操作しながら“エキスパート”になりましょう。仕上げに、3つを1本の流れにつなげます。</p>
+        <div class="flow-mini">
+          <span class="chiparr"><span class="chip d">① 名前→住所の変換</span><span class="arr">→</span></span>
+          <span class="chiparr"><span class="chip p">② データの梱包</span><span class="arr">→</span></span>
+          <span class="chiparr"><span class="chip r">③ 経路選択</span></span>
+        </div>
+      </div>
+
+      <div class="name-input-wrap">
+        <label for="student-name">👤 氏名・出席番号：</label>
+        <input type="text" id="student-name" placeholder="例：1組01番 情報太郎（入力すると自動保存されます）">
+      </div>
+
+      <div class="goal-box">
+        <div class="gb-title">🎯 本時のめあて</div>
+        <ul>
+          <li>URLを入力してからページが表示されるまでの3つの役割を説明できる。</li>
+          <li>「身近な例え」を用いて、各プロトコルの働きをイメージできる。</li>
+          <li><small>【教科書対応】情報Ⅰ「情報通信ネットワークとデータの活用」</small></li>
+        </ul>
+        <div
+          style="margin-top: 1.2rem; padding: 0.8rem; background: var(--alert-soft); color: var(--alert-ink); border-radius: 8px; font-size: 0.95rem; line-height: 1.6;">
+          <b style="display:block; text-align:center; margin-bottom:0.3rem;">⚠️ 【学習の進め方】教科書を「軸」にしよう！</b>
+          まずは教科書で正確な基礎知識を固め、この教材で「動き」を体感し、足りない情報はネットで調べてみよう。AIの答えを書き写すのではなく、3つの情報を自分の頭で組み立てて、<b>「あとでクラスメイトに自分の言葉で説明できる状態」</b>を目指すのが今回のゴールです！
+        </div>
+      </div>
+
+      <div class="section-title">
+        <h2>全体マップ：3つの工程</h2><span>動画と同じ流れ。①②③は担当パート</span>
+      </div>
+      <div class="flowmap">
+        <div class="fm-node"><span class="fm-ic">📱</span><b>URL入力</b><small>example.com</small></div>
+        <div class="fm-arrow">→</div>
+        <div class="fm-node fm-dns" role="button" tabindex="0" onclick="go('dns')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('dns')}"><span class="fm-no">①</span><b>名前→住所</b><small>DNS</small></div>
+        <div class="fm-arrow">→</div>
+        <div class="fm-node fm-pkt" role="button" tabindex="0" onclick="go('pkt')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('pkt')}"><span class="fm-no">②</span><b>データの梱包</b><small>パケット・IP</small></div>
+        <div class="fm-arrow">→</div>
+        <div class="fm-node fm-rt" role="button" tabindex="0" onclick="go('rt')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('rt')}"><span class="fm-no">③</span><b>経路選択</b><small>ルーティング</small></div>
+        <div class="fm-arrow">→</div>
+        <div class="fm-node"><span class="fm-ic">🖥️</span><b>サーバー</b><small>到達</small></div>
+        <div class="fm-arrow">→</div>
+        <div class="fm-node fm-goal"><span class="fm-ic">✅</span><b>ページ表示</b></div>
+      </div>
+      <p class="hint" style="text-align:center">①②③をタップすると、その担当パートに移動します。</p>
+
+      <div class="section-title">
+        <h2>担当パートを選ぶ</h2><span>触って確かめ → 理解チェック → 説明準備</span>
+      </div>
+      <div class="cards">
+        <div class="pcard dns" role="button" tabindex="0" onclick="go('dns')"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('dns')}">
+          <span class="tag">PART ①・DNS</span>
+          <h3>名前 → 住所の変換</h3>
+          <p class="desc">「example.com」という名前を、コンピュータ用の住所（IPアドレス）に変換するしくみ。電話帳のイメージ。</p>
+          <div class="bar"><i id="bar-dns"></i></div>
+          <span class="go">はじめる →</span>
+        </div>
+        <div class="pcard pkt" role="button" tabindex="0" onclick="go('pkt')"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('pkt')}">
+          <span class="tag">PART ②・パケット／IP</span>
+          <h3>データの梱包</h3>
+          <p class="desc">大きなデータを小さな「パケット」に分けて運び、最後に組み立て直すしくみ。宅配便の小包のイメージ。</p>
+          <div class="bar"><i id="bar-pkt"></i></div>
+          <span class="go">はじめる →</span>
+        </div>
+        <div class="pcard rt" role="button" tabindex="0" onclick="go('rt')"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('rt')}">
+          <span class="tag">PART ③・ルーティング</span>
+          <h3>経路選択</h3>
+          <p class="desc">パケットが「次にどこへ渡すか」を選びながら相手まで届くしくみ。郵便の中継＝ルーターのイメージ。</p>
+          <div class="bar"><i id="bar-rt"></i></div>
+          <span class="go">はじめる →</span>
+        </div>
+      </div>
+
+      <div class="integ-card" onclick="go('integ')">
+        <div class="l">
+          <span class="badge">∑</span>
+          <div>
+            <h3>全体の流れ（統合）</h3>
+            <p>①②③が1本につながる流れを通しで確認。対面授業のまとめに。</p>
+          </div>
+        </div>
+        <span class="btn line sm">通しで見る →</span>
+      </div>
+
+      <div class="section-title">
+        <h2>もっと調べる・深める</h2><span>webならではの“資料集”として</span>
+      </div>
+      <div class="cards">
+        <div class="pcard live" role="button" tabindex="0" onclick="go('live')"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('live')}">
+          <span class="tag">LIVE・実データ</span>
+          <h3>実データで見る</h3>
+          <p class="desc">このページの読み込み時間、本物のDNS、あなたのIP、URLの分解。“今・自分の”データで確かめます。</p>
+          <span class="go">ひらく →</span>
+        </div>
+        <div class="pcard ref" role="button" tabindex="0" onclick="go('ref')"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('ref')}">
+          <span class="tag">REFERENCE・資料集</span>
+          <h3>用語・発展・全体像</h3>
+          <p class="desc">用語集（検索）、TCP/IP階層、もっと詳しく、ありがちな誤解、セキュリティ。調べる教材として。</p>
+          <span class="go">ひらく →</span>
+        </div>
+      </div>
+
+      <div class="howto">
+        <b>使い方：</b>① 自分の担当パートを開いて操作 → ② 理解チェック → ③ 説明準備に書き込み（この端末に自動保存）。
+        対面授業では、同じ担当どうしで確認し、ちがう担当へ説明し合います（ジグソー）。最後に「全体の流れ」で答え合わせ。
+        右上で<b>表示テーマ</b>と<b>文字サイズ</b>を切り替えられます。
+      </div>
+    </section>
+
+    <!-- ===================== DNS ===================== -->
+    <section class="view" id="view-dns">
+      <div class="crumb"><button class="back" onclick="go('home')">← ホーム</button><span class="kicker">PART ①・DNS</span>
+      </div>
+      <div class="parthead">
+        <h1>名前 → 住所の変換（DNS）</h1>
+      </div>
+      <div class="analogy-box">
+        <div class="ab-title">💡 身近な例え：電話帳</div>
+        <p>人にやさしい名前「example.com」を、機械が使う番号「93.184.216.34」に変換する案内係が <b>DNS</b> です。電話帳で「名前から電話番号」を調べるのと同じ役割を果たします。</p>
+      </div>
+      <div class="steptabs" data-for="dns">
+        <button class="steptab cur" onclick="jump('dns','exp')">① 体験</button>
+        <button class="steptab" onclick="jump('dns','quiz')">② 理解チェック</button>
+        <button class="steptab" onclick="jump('dns','prep')">③ 説明準備</button>
+      </div>
+
+      <div class="block" id="dns-exp">
+        <h2><span class="step-no">1</span>クリックで問い合わせを体験</h2>
+        <p class="hint">「アクセス開始」を押し、「次へ」で1ステップずつ。だれに何を聞いているかに注目。</p>
+        <div class="stage">
+          <div class="dns-stage">
+            <div class="node user" id="dns-pc">
+              <div class="ic">💻</div>
+              <div class="nm">あなたのPC</div>
+              <div class="sub">example.com</div>
+            </div>
+            <div class="tiers">
+              <div class="tier-row">
+                <div class="node crown" id="dns-root">
+                  <div class="ic">🗄️</div>
+                  <div class="nm">ルートサーバー</div>
+                </div>
+                <div class="say" id="say-root"></div>
+              </div>
+              <div class="tier-row">
+                <div class="node" id="dns-tld">
+                  <div class="ic">🗄️</div>
+                  <div class="nm">TLDサーバー</div>
+                  <div class="sub">.com 担当</div>
+                </div>
+                <div class="say" id="say-tld"></div>
+              </div>
+              <div class="tier-row">
+                <div class="node" id="dns-auth">
+                  <div class="ic">🗄️</div>
+                  <div class="nm">権威サーバー</div>
+                  <div class="sub">example.com 担当</div>
+                </div>
+                <div class="say" id="say-auth"></div>
+              </div>
+            </div>
+          </div>
+          <div class="token" id="dns-token" style="display:none">?</div>
+          <div id="dns-result" style="margin-top:.8rem"></div>
+        </div>
+        <div class="btnrow">
+          <button class="btn primary" id="dns-go">アクセス開始</button>
+          <button class="btn line" id="dns-next" disabled>次へ ▶</button>
+          <button class="btn line sm" id="dns-reset2">最初から</button>
+        </div>
+        <div class="flash info" id="dns-flash" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="block" id="dns-quiz">
+        <h2><span class="step-no">2</span>理解チェック</h2>
+        <div class="quiz" id="dns-quizbox"></div>
+      </div>
+
+      <div class="block" id="dns-prep">
+        <h2><span class="step-no">3</span>説明準備（対面授業で使うメモ）</h2>
+        <p class="hint">ちがう担当の人に説明するつもりで、自分の言葉でまとめましょう。</p>
+        <div id="dns-prepbox"></div>
+      </div>
+    </section>
+
+    <!-- ===================== パケット ===================== -->
+    <section class="view" id="view-pkt">
+      <div class="crumb"><button class="back" onclick="go('home')">← ホーム</button><span class="kicker">PART
+          ②・パケット／IP</span></div>
+      <div class="parthead">
+        <h1>データの梱包（パケット）</h1>
+      </div>
+      <p class="meta">大きなデータはそのままでは運びにくいので、小さな <b>パケット</b> に分け、バラバラに運んで、最後に番号順へ組み立て直します。宅配便で大きな荷物を小包に分けるイメージです。</p>
+      <div class="steptabs" data-for="pkt">
+        <button class="steptab cur" onclick="jump('pkt','exp')">① 体験</button>
+        <button class="steptab" onclick="jump('pkt','quiz')">② 理解チェック</button>
+        <button class="steptab" onclick="jump('pkt','prep')">③ 説明準備</button>
+      </div>
+
+      <div class="block" id="pkt-exp">
+        <h2><span class="step-no">1</span>分割 → 運搬 → 並べ替えを体験</h2>
+        <p class="hint">順番にボタンを押してみよう。並べ替えは <b>カードをタップ → 別のカードをタップ</b> で入れ替えます。</p>
+        <div class="stage">
+          <div class="endpoints">
+            <span class="ep"><span class="ic">💻</span>送信元</span>
+            <span class="label-sm" id="pkt-stagelabel">大きなデータを送ります</span>
+            <span class="ep">受信先<span class="ic">🗄️</span></span>
+          </div>
+          <div id="pkt-area">
+            <div class="pkt-flow">
+              <div></div>
+              <div class="bigdata" id="bigdata">大きなデータ</div>
+              <div></div>
+            </div>
+          </div>
+          <div class="flash info" id="pkt-flash" role="status" aria-live="polite"></div>
+          <div class="struct" id="pkt-struct" style="display:none">
+            <div class="hdr">
+              <div class="ttl">ヘッダ（宛名・付帯情報）</div>
+              <div class="row"><span>宛先IPアドレス</span><b>93.184.216.34</b></div>
+              <div class="row"><span>送信元IPアドレス</span><b>198.51.100.7</b></div>
+              <div class="row"><span>パケット番号</span><b>3 / 5</b></div>
+            </div>
+            <div class="body-blk">データ本体<br>（中身の一部）</div>
+          </div>
+        </div>
+        <div class="btnrow">
+          <button class="btn primary" id="pkt-split">① 分割する</button>
+          <button class="btn line" id="pkt-send" disabled>② 送信する</button>
+          <button class="btn line" id="pkt-struct-btn">パケットの中身を見る</button>
+          <button class="btn line" id="pkt-lost" disabled>1個ロスを試す</button>
+          <button class="btn line sm" id="pkt-reset2">最初から</button>
+        </div>
+      </div>
+
+      <div class="block" id="pkt-quiz">
+        <h2><span class="step-no">2</span>理解チェック</h2>
+        <div class="quiz" id="pkt-quizbox"></div>
+      </div>
+
+      <div class="block" id="pkt-prep">
+        <h2><span class="step-no">3</span>説明準備（対面授業で使うメモ）</h2>
+        <p class="hint">ちがう担当の人に説明するつもりで、自分の言葉でまとめましょう。</p>
+        <div id="pkt-prepbox"></div>
+      </div>
+    </section>
+
+    <!-- ===================== ルーティング ===================== -->
+    <section class="view" id="view-rt">
+      <div class="crumb"><button class="back" onclick="go('home')">← ホーム</button><span class="kicker">PART
+          ③・ルーティング</span></div>
+      <div class="parthead">
+        <h1>経路選択（ルーティング）</h1>
+      </div>
+      <p class="meta">パケットは1本道では進みません。各 <b>ルーター</b> が「次にどこへ渡すか」を選びながらバケツリレーで届けます。道は何通りもあるので、途中が1台こわれても回り道できます。</p>
+      <div class="steptabs" data-for="rt">
+        <button class="steptab cur" onclick="jump('rt','exp')">① 体験</button>
+        <button class="steptab" onclick="jump('rt','quiz')">② 理解チェック</button>
+        <button class="steptab" onclick="jump('rt','prep')">③ 説明準備</button>
+      </div>
+
+      <div class="block" id="rt-exp">
+        <h2><span class="step-no">1</span>道を選んで届けてみよう</h2>
+        <p class="hint"><b>S（送信元）</b>から始まっています。点線で光った隣のルーターを順にタップして <b>G（目的地）</b> まで道をつなげましょう。</p>
+        <div class="mesh-wrap">
+          <svg class="mesh" id="mesh" viewBox="0 0 640 360" role="img" aria-label="ネットワークの経路図"></svg>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--user-soft);border:2px solid var(--user)"></i>送信元 S</span>
+          <span><i style="background:var(--server-soft);border:2px solid var(--server)"></i>目的地 G</span>
+          <span><i style="background:var(--surface);border:2px solid var(--mesh-edge)"></i>ルーター</span>
+          <span><i style="background:var(--alert-soft);border:2px solid var(--alert)"></i>故障中</span>
+        </div>
+        <div class="flash info" id="rt-flash" role="status" aria-live="polite"></div>
+        <div class="btnrow">
+          <button class="btn line" id="rt-undo">1つ戻す</button>
+          <button class="btn line" id="rt-clear">やり直す</button>
+          <button class="btn primary" id="rt-break">🔧 ルーターを1台こわす</button>
+        </div>
+      </div>
+
+      <div class="block" id="rt-quiz">
+        <h2><span class="step-no">2</span>理解チェック</h2>
+        <div class="quiz" id="rt-quizbox"></div>
+      </div>
+
+      <div class="block" id="rt-prep">
+        <h2><span class="step-no">3</span>説明準備（対面授業で使うメモ）</h2>
+        <p class="hint">ちがう担当の人に説明するつもりで、自分の言葉でまとめましょう。</p>
+        <div id="rt-prepbox"></div>
+      </div>
+    </section>
+
+    <!-- ===================== 統合 ===================== -->
+    <section class="view" id="view-integ">
+      <div class="crumb"><button class="back" onclick="go('home')">← ホーム</button><span class="kicker gold">統合</span>
+      </div>
+      <div class="parthead">
+        <h1>全体の流れ：URL → ページ表示</h1>
+      </div>
+      <p class="meta">①②③が1本につながります。「次のステップ」を押して、最初から最後までを通して確認しましょう。</p>
+
+      <div class="block">
+        <div class="flowsteps" id="flowsteps"></div>
+        <div class="btnrow">
+          <button class="btn primary" id="integ-next" style="--accent-solid:var(--gold)">次のステップ ▶</button>
+          <button class="btn line sm" id="integ-reset">最初から</button>
+        </div>
+        <div class="flash ok" id="integ-flash" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="block">
+        <h2><span class="step-no" style="background:var(--gold)">★</span>ふりかえり</h2>
+        <p class="hint">①②③が1つにつながる流れを、自分の言葉で説明してみよう。</p>
+        <div id="integ-prepbox"></div>
+      </div>
+
+      <div class="block">
+        <h2><span class="step-no" style="background:var(--gold)">◎</span>クロストーク（班で統合）</h2>
+        <p class="hint">エキスパート活動のあと、班の3人で「URL入力 → ページ表示」の全体を1つにまとめます。</p>
+        <ol class="steps-ol">
+          <li>各メンバーが担当パートを順番に説明（各3分・計約10分）</li>
+          <li>3つのパートがどうつながるかを話し合う（約5分）</li>
+          <li>班で1枚の「全体マップ」を描く（約10分）</li>
+          <li>班ごとに発表（約5分）</li>
+        </ol>
+        <div class="miscard" id="phish-card">
+          <div class="bad">🤔 発展：フィッシング詐欺は、この流れのどこを悪用している？</div>
+          <div class="good">本物そっくりの「名前（ドメイン名）」で人をだまし、①の“名前→住所”の信頼を逆手に取ります。鍵マーク（HTTPS）があっても“本物のドメインか”は別問題。host（ドメイン）をよく見ることが大切です。</div>
+          <div class="tap">タップでヒント</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <h2><span class="step-no" style="background:var(--gold)">?</span>総合クイズ（全体のまとめ）</h2>
+        <p class="hint">3パート全体から出題します（順番はランダム）。理解の最終チェックに。</p>
+        <div class="quiz" id="cap-quizbox"></div>
+        <div class="block" id="complete-cert" style="display: none;">
+          <div class="cert-inner">
+            <div class="cert-icon">🎉</div>
+            <h2>COURSE COMPLETE</h2>
+            <p>すべての学習と確認クイズが完了しました！</p>
+            <div class="cert-name" id="cert-name-display">未入力</div>
+            <p class="cert-ins">この画面のスクリーンショットを撮影し、<br>先生の指示に従って提出してください。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 実データ（LIVE） ===================== -->
+    <section class="view" id="view-live">
+      <div class="crumb"><button class="back" onclick="go('home')">← ホーム</button><span class="kicker">LIVE・実データ</span>
+      </div>
+      <div class="parthead">
+        <h1>実データで見る</h1>
+      </div>
+      <p class="meta">教科書の「例」ではなく、いま・あなたの端末の本物のデータで確かめます。下のツールはインターネット接続が必要です（オフライン時はその旨を表示します）。</p>
+
+      <div class="tool">
+        <h3>⏱ このページが表示されるまでの実測 <span class="pill">単元テーマ</span></h3>
+        <p class="lead">たった今このページを開くのに、各段階で何ミリ秒かかったか（あなたの端末の実測値）。</p>
+        <div class="out" id="perf-out"></div>
+        <div class="btnrow"><button class="btn primary" id="perf-btn">もう一度計測</button></div>
+        <div class="warnnote">0 ms と出る項目は「計測なし」（キャッシュ済み・ローカル表示など）の場合があります。公開URL（https）で開くと値が出ます。</div>
+      </div>
+
+      <div class="tool">
+        <h3>🔎 本物のDNSを引く</h3>
+        <p class="lead">ドメイン名を入れると、今この瞬間の本物のIPアドレス（とTTL）を取得します。</p>
+        <div class="inrow">
+          <input type="text" id="dns-input" placeholder="example.com" value="example.com">
+          <button class="btn primary" id="dns-lookup">引く</button>
+        </div>
+        <div class="btnrow">
+          <button class="btn line sm" data-dns-ex="example.com">example.com</button>
+          <button class="btn line sm" data-dns-ex="wikipedia.org">wikipedia.org</button>
+          <button class="btn line sm" data-dns-ex="github.com">github.com</button>
+        </div>
+        <div class="out" id="dns-out">ここに結果が表示されます。</div>
+      </div>
+
+      <div class="tool">
+        <h3>🏠 あなたのIPアドレス</h3>
+        <p class="lead">今アクセスしている、この端末のグローバルIPアドレスを表示します（保存はしません）。</p>
+        <div class="btnrow"><button class="btn primary" id="ip-btn">自分のIPを見る</button></div>
+        <div class="out" id="ip-out">ボタンを押すと表示します。</div>
+      </div>
+
+      <div class="tool">
+        <h3>🧩 URLを分解する</h3>
+        <p class="lead">URLがどんな部品でできているかを、色分けして表示します。</p>
+        <div class="inrow">
+          <input type="text" id="url-input" placeholder="https://example.com:443/news/index.html?id=7#top"
+            value="https://example.com/news/index.html?id=7#top">
+          <button class="btn primary" id="url-btn">分解する</button>
+        </div>
+        <div class="out" id="url-out" style="font-family:var(--font)">ここに分解結果が表示されます。</div>
+      </div>
+
+      <div class="tool">
+        <h3>📶 通信時間を計算する</h3>
+        <p class="lead">大きなデータほど時間がかかります。「データ量 ÷ 通信速度」で、転送にかかるおよその時間を計算します（実測のミリ秒ともつながります）。</p>
+        <div class="inrow">
+          <input type="text" id="tt-size" inputmode="decimal" value="500" style="flex:0 1 8rem">
+          <select id="tt-sizeunit" class="ttsel"><option value="1">MB</option><option value="1000">GB</option><option value="0.001">KB</option></select>
+          <span class="ttx">÷</span>
+          <input type="text" id="tt-speed" inputmode="decimal" value="100" style="flex:0 1 8rem">
+          <select id="tt-speedunit" class="ttsel"><option value="1">Mbps</option><option value="1000">Gbps</option></select>
+          <button class="btn primary" id="tt-btn">計算</button>
+        </div>
+        <div class="out" id="tt-out" style="font-family:var(--font)">「計算」を押すと、転送時間の目安が出ます。</div>
+        <div class="warnnote">通信速度の単位は bps（ビット毎秒）、データ量は B（バイト, 1B=8ビット）。理論上の最短で、実際は混雑などでもっとかかります。</div>
+      </div>
+    </section>
+
+    <!-- ===================== 資料集（REFERENCE） ===================== -->
+    <section class="view" id="view-ref">
+      <div class="crumb"><button class="back" onclick="go('home')">← ホーム</button><span
+          class="kicker gold">REFERENCE・資料集</span></div>
+      <div class="parthead">
+        <h1>資料集</h1>
+      </div>
+      <p class="meta">調べる・深めるためのページです。用語を検索したり、発展トピックを開いたり、全体像を確認できます。授業の前後や、わからない言葉が出たときに。</p>
+
+      <div class="refsub"><span class="ic">📖</span>用語集（検索できます）</div>
+      <div class="gsearch-wrap"><input class="gsearch" id="gsearch" type="text" placeholder="用語を検索（例：パケット、ポート、TTL）">
+      </div>
+      <div class="glist" id="glist"></div>
+
+      <div class="refsub"><span class="ic">🗺</span>全体像：TCP/IP の4階層</div>
+      <p class="hint">通信は役割ごとに4つの層に分かれています。各層をタップして、3つのパートがどこに当たるか確認しましょう。</p>
+      <div class="layers" id="layermap">
+        <details class="layer l1" open>
+          <summary><span class="num">4</span>アプリケーション層</summary>
+          <div class="body">人が使うアプリの言葉。Webページ(HTTP/HTTPS)や、名前解決(DNS)はここ。<br><span class="rel">関連：① DNS <a
+                data-go="dns">→体験</a></span></div>
+        </details>
+        <details class="layer l2">
+          <summary><span class="num">3</span>トランスポート層</summary>
+          <div class="body">相手のどのサービスへ届けるか（ポート番号）、確実に届ける(TCP)／速さ優先(UDP)を担当。</div>
+        </details>
+        <details class="layer l3">
+          <summary><span class="num">2</span>インターネット層</summary>
+          <div class="body">住所(IPアドレス)を頼りに、どの道で運ぶかを決める。パケットとルーティングはここ。<br><span class="rel">関連：② パケット <a
+                data-go="pkt">→体験</a> ／ ③ 経路選択 <a data-go="rt">→体験</a></span></div>
+        </details>
+        <details class="layer l4">
+          <summary><span class="num">1</span>ネットワークインターフェース層</summary>
+          <div class="body">となりの機器への実際の信号（Wi-Fi・イーサネットなど）。機器固有の「MACアドレス」を使って直接通信します。</div>
+        </details>
+      </div>
+
+      <div class="refsub"><span class="ic">📺</span>動画の要点（説明づくりのヒント）</div>
+      <p class="hint">動画で扱った3パートの要点と、説明づくりのモデル例です。まずは自分の言葉で考え、つまったらここを参考に。</p>
+      <details class="adv"><summary>① DNS：名前→住所（たとえ：電話帳）</summary><div class="body">
+        <b>たとえ：</b>名前だけでは電話できない。電話帳で「名前→番号」を調べる＝DNSが「ドメイン名→IPアドレス」を調べる。<br>
+        <b>3行で言うと：</b><br>・example.com のような名前は、コンピュータにはそのままでは通じない。<br>・DNSサーバーが、その名前を 93.184.216.34 のようなIPアドレスに変換してくれる。<br>・変換は「ルート→TLD→権威」の3段階の問い合わせで完成する。<br>
+        <b>よくある質問：</b><br>Q. なぜ3段階に分けるの？ → 世界中のドメインを1台で管理するのは無理だから、役割を分担している。<br>Q. DNSが止まると？ → 名前をIPに変換できず、example.com と入力しても表示されない。
+      </div></details>
+      <details class="adv"><summary>② パケット・IP：データの梱包（たとえ：宅配便）</summary><div class="body">
+        <b>たとえ：</b>100kgの荷物は1箱では送れない。小箱に分けて宛先ラベルを貼る＝データを小さなパケットに分け、宛先IPと番号を付ける。<br>
+        <b>3行で言うと：</b><br>・データは一度に送らず、小さな「パケット」に分割される。<br>・各パケットには宛先IPアドレスと番号が付き、それぞれ別の道で運ばれる。<br>・受け取った側で番号順に並べ直し、元のデータに戻す。<br>
+        <b>よくある質問：</b><br>Q. なぜ分割するの？ → 大きいまま送ると他の通信を妨げ、エラー時に全部やり直しになる。分けると効率的で強い。<br>Q. 1個だけ届かなかったら？ → その番号だけ「もう一度送って」と再送をお願いする。
+      </div></details>
+      <details class="adv"><summary>③ ルーティング：経路選択（たとえ：郵便中継）</summary><div class="body">
+        <b>たとえ：</b>東京→沖縄の手紙は、いくつもの郵便局を中継して届く＝パケットは複数のルーターを中継して目的地へ運ばれる。<br>
+        <b>3行で言うと：</b><br>・パケットは目的地まで、たくさんのルーターを中継して運ばれる。<br>・各ルーターはルーティングテーブルを見て「次の道」を選ぶ。<br>・網目状なので、1台が壊れても別の道（う回路）を使える。<br>
+        <b>よくある質問：</b><br>Q. 何個くらい経由するの？ → 近場なら数個、世界の裏側なら20個以上。それでも0.数秒で届く。<br>Q. 途中のルーターが故障したら？ → 他のルーターが別の道を選び、自動でう回するので止まらない。
+      </div></details>
+
+      <div class="refsub"><span class="ic">➕</span>もっと詳しく（発展）</div>
+      <details class="adv">
+        <summary>HTTP と HTTPS（鍵マークの正体）</summary>
+        <div class="body">
+          HTTPはWebページをやり取りする約束事。HTTPSはそれを暗号化(TLS)して、途中で盗み見・改ざんされないようにしたもの。アドレスバーの鍵マークは「暗号化されている」印で、相手が“本物のドメインか”はまた別の確認が必要です。
+        </div>
+      </details>
+      <details class="adv">
+        <summary>ポート番号（窓口の番号）</summary>
+        <div class="body">同じ住所(IP)の中で「どのサービスか」を区別する番号。例：HTTP=80、HTTPS=443。URLで省略すると既定の番号が使われます。</div>
+      </details>
+      <details class="adv">
+        <summary>IPv4 と IPv6</summary>
+        <div class="body">IPv4は 93.184.216.34 のような形式で、数が足りなくなってきました。より多くの住所を持てるIPv6（例：2606:2800:… ）が普及しています。</div>
+      </details>
+      <details class="adv">
+        <summary>DHCP（自動で住所を配る）</summary>
+        <div class="body">ネットにつないだ端末へ、IPアドレスなどを自動で割り当てるしくみ。だから自分で番号を設定しなくてもつながります。</div>
+      </details>
+      <details class="adv">
+        <summary>NAT（家の中の住所 ↔ 外の住所）</summary>
+        <div class="body">家庭内で使う私的なIPと、インターネット側のグローバルIPを変換するしくみ。1つのグローバルIPを家中の機器で共有できます。</div>
+      </details>
+      <details class="adv">
+        <summary>TCPの3ウェイハンドシェイク</summary>
+        <div class="body">データを送る前に「送るよ→いいよ→よろしく」の3往復で接続を確認してから通信を始めるしくみ。確実なやり取り(TCP)の土台です。</div>
+      </details>
+      <details class="adv">
+        <summary>回線交換とパケット交換の違い</summary>
+        <div class="body">
+          従来の電話のような「回線交換」は、通信が終わるまで回線を占有するため他の人が使えません。一方、インターネットの「パケット交換」は、データを小包（パケット）に分けて同じ回線に混在させて流すため、ネットワークの利用効率が飛躍的に高くなりました。
+        </div>
+      </details>
+      <details class="adv">
+        <summary>LANの構成と集線装置（ハブ・スイッチ）</summary>
+        <div class="body">
+          学校や会社など限られた範囲のネットワークを「LAN」と呼び、サービスを要求するクライアントと、提供するサーバで構成されます。機器をつなぐ集線装置のうち、「ハブ」は届いたデータを全機器に送信しますが、「スイッチ」は宛先を検出し特定の機器だけに送信するためネットワークの負担が減ります。
+        </div>
+      </details>
+      <details class="adv">
+        <summary>グローバルIPとプライベートIP</summary>
+        <div class="body">
+          インターネット上で重複しない世界共通の住所が「グローバルIP」です。しかし、世界中の機器に割り当てると数が足りなくなるため、家庭や学校のLAN内だけで使える「プライベートIP」という内線番号のような仕組みが使われています。
+        </div>
+      </details>
+      <details class="adv">
+        <summary>電子メールが届く仕組み（SMTP / IMAP）</summary>
+        <div class="body">
+          Webページと同様にDNSやルータを使いますが、やり取りには別の約束事を使います。メールを送信・転送する時は「SMTP」、サーバ上のメールを受信・管理・閲覧する時は「IMAP」や「POP」というプロトコルを使います。
+        </div>
+      </details>
+      <details class="adv">
+        <summary>MACアドレス（機器固有の物理アドレス）</summary>
+        <div class="body">
+          IPアドレスが「最終的な目的地」を示すなら、MACアドレスは「次の中継先」を示す住所です。各機器のネットワーク部品に製造時から割り当てられており、インターフェース層（第1層）で使われます。
+        </div>
+      </details>
+      <details class="adv">
+        <summary>通信速度（bps）と bit / Byte</summary>
+        <div class="body">
+          ネットワークの速度は「bps（ビット毎秒：1秒間に何ビット送れるか）」で表します。一方、データのサイズは「Byte（バイト）」が主流です（1 Byte = 8 bits）。たとえば 80Mbps の回線で
+          10MB(メガバイト) のデータを送る場合、データは 80Mbit なので 1秒 かかります。
+        </div>
+      </details>
+      <details class="adv">
+        <summary>共通鍵暗号と公開鍵暗号（HTTPSの裏側）</summary>
+        <div class="body">
+          「共通鍵」は暗号化と復号に同じ鍵を使いますが、鍵の受け渡しが危険です。「公開鍵」は誰でも暗号化できる鍵を公開し、復号は自分しか持たない秘密鍵で行うため安全ですが、処理が遅いです。HTTPSでは、最初だけ公開鍵を使って「共通鍵」を安全に渡し、以後は速い共通鍵で通信する「ハイブリッド方式」を使っています。
+        </div>
+      </details>
+
+      <details class="adv"><summary>IPアドレスの仕組み（ネットワーク部とホスト部）</summary><div class="body">
+        IPアドレスは「どのネットワークか（ネットワーク部）」と「その中のどの機器か（ホスト部）」に分かれます。区切りを表すのが<b>サブネットマスク</b>（例：/24 は先頭から24ビットがネットワーク部）。同じネットワーク部どうしは直接、ちがえばルーター経由でやり取りします。下のボタンで確かめてみましょう。
+        <div class="inrow" style="margin-top:.6rem">
+          <input type="text" id="ipx" inputmode="decimal" value="192.168.1.10" style="flex:0 1 12rem">
+          <button class="btn line sm" data-prefix="8">/8</button>
+          <button class="btn line sm" data-prefix="16">/16</button>
+          <button class="btn primary" data-prefix="24" id="ipx-default">/24</button>
+        </div>
+        <div id="ipx-out" style="margin-top:.5rem"></div>
+      </div></details>
+
+      <div class="refsub"><span class="ic">⚠️</span>ありがちな誤解（タップで答え）</div>
+      <div id="miscards"></div>
+
+      <div class="refsub"><span class="ic">🔐</span>セキュリティとモラルの視点</div>
+      <div class="infocard">
+        <h4>鍵マーク＝安全、ではない</h4>
+        <p>HTTPSは通信の暗号化を示すだけ。表示されたドメイン名が“本物か”は自分で確かめましょう（似せた偽ドメインに注意）。</p>
+      </div>
+      <div class="infocard">
+        <h4>そっくりなURL・ドメイン詐称</h4>
+        <p>「examp1e.com」「example.co.jp.evil.com」のように、本物に似せた名前で誘導する手口があります。host（ドメイン）部分をよく見る習慣を。</p>
+      </div>
+      <div class="infocard">
+        <h4>DNSの改ざん</h4>
+        <p>名前解決の答えがすり替えられると、偽サイトに誘導されることがあります。DNSの信頼性が安全の土台になっています。</p>
+      </div>
+      <div class="infocard">
+        <h4>ファイアウォール（通信の関所）</h4>
+        <p>ネットワークの境界に設置し、パケットのヘッダ（送信元IPやポート番号）を見て、通して良いデータか悪いデータかを判断して遮断する防護壁の役割を果たします。</p>
+      </div>
+      <div class="infocard">
+        <h4>情報セキュリティの3要素（CIA）</h4>
+        <p>情報を守るには「機密性（漏らさない）」「完全性（改ざんされない）」「可用性（いつでも使える）」の3つが揃う必要があります。どれか一つ欠けても安全とは言えません。</p>
+      </div>
+
+      <div class="refsub"><span class="ic">📰</span>実例：止まると何が起きる？</div>
+      <div class="infocard">
+        <h4>大規模なDNS障害・経路障害</h4>
+        <p>
+          過去には、DNSや経路情報の不具合で多くのサービスが同時につながらなくなる出来事が起きています。だからこそ「サーバーを分散する」「道を複数用意する（1台壊れても迂回）」という冗長性が大切にされています。これは③ルーティングで体験した“別の道”の考え方そのものです。
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    この教材は HTML / CSS / JavaScript の数ファイルで動きます。中心の学習はネット接続なしでも利用でき、「実データ」のツールのみ接続が必要です。入力内容・設定はこの端末にのみ保存されます。<br>
+    ドメイン例 example.com / IP例 93.184.216.34（説明用）。実在のロゴ・商標は使用していません。
+  </footer>
+
+</body>
+
+</html>
